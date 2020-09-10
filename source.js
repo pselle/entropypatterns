@@ -44,6 +44,17 @@ function drawViz(randomness) {
   }
 }
 
+document.getElementById("stop").addEventListener("click", function(e) {
+  if (cancelPoll) {
+    cancelPoll = false;
+    e.target.textContent = "Stop changing";
+    poll();
+  } else {
+    cancelPoll = true;
+    e.target.textContent = "Start changing";
+  }
+});
+
 // A global variable so we can abort the polling
 var cancelPoll = false;
 var interval = 5;
@@ -53,6 +64,7 @@ function poll() {
   console.log("starting polling every " + interval + " seconds");
   const runPoll = function() {
     if (cancelPoll) {
+      console.log("Stopping polling");
       return;
     }
     fetch("https://drand.cloudflare.com/public/latest")
