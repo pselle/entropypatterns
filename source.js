@@ -1,4 +1,4 @@
-function makePattern() {
+function makePattern(color, bg) {
   // Create a pattern, offscreen
   const patternCanvas = document.createElement("canvas");
   const patternContext = patternCanvas.getContext("2d");
@@ -7,17 +7,31 @@ function makePattern() {
   var array = new Uint8Array(2);
   window.crypto.getRandomValues(array);
 
-  // Give the pattern a width and height of 50
-  patternCanvas.width = array[0] / 2 > 15 ? array[0] / 2 : 10;
+  // Give the pattern a width and height dependent on the array
+  if (array[0] > 50) {
+    array[0] = array[0]/2;
+  }
+  if (array[1] > 50) {
+    array[1] = array[1]/2;
+  }
+  patternCanvas.width = array[0] > 15 ? array[0] / 2 : 10;
   console.log("Pattern width", patternCanvas.width);
-  patternCanvas.height = array[1] / 2 > 5 ? array[1] / 2 : 10;
+  patternCanvas.height = array[1] > 5 ? array[1] / 2 : 10;
   console.log("Pattern height:", patternCanvas.height);
 
   // Give the pattern a background color and draw an arc
-  patternContext.fillStyle = "#eee";
+  if (bg) {
+    patternContext.fillStyle = bg;
+  }
   patternContext.fillRect(0, 0, patternCanvas.width, patternCanvas.height);
-  patternContext.arc(0, 0, 25, 0, Math.cos(array[0]) * 2);
+  patternContext.arc(0, 0, 10, 0, Math.sin(array[0]) * 2);
   patternContext.strokeStyle = color;
+  patternContext.stroke();
+  patternContext.arc(0, 0, 25, 0, Math.cos(array[1]) * 2);
+  patternContext.stroke();
+  patternContext.arc(0, 0, 25, 0, Math.cos(array[0]) * 2);
+  patternContext.stroke();
+  patternContext.arc(0, 0, 25, 0, Math.sin(array[1]) * 2);
   patternContext.stroke();
   return patternCanvas;
 }
@@ -26,21 +40,19 @@ function drawViz(randomness) {
   const regex = /[a-z]/gi;
   const colorRegex = /[g-z]/gi;
   // Generate a number from the random value
-  r = randomness.replaceAll(regex, "");
+  rNum = randomness.replaceAll(regex, "");
   // Generate a color from the random value
   color = "#" + randomness.replaceAll(colorRegex, "").slice(0,6);
+  color2 = "#" + randomness.replaceAll(colorRegex, "").slice(3,9);
   console.log("Color:", color);
-  r = Math.log(r).toFixed(2);
 
   var canvas = document.getElementById("canvas");
   if (canvas.getContext) {
     var ctx = canvas.getContext("2d");
-
-    const pattern = ctx.createPattern(makePattern(color), "repeat");
+    const pattern = ctx.createPattern(makePattern(color, "#eee"), "repeat");
     ctx.fillStyle = pattern;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // ctx.clearRect(45, 45, 60, 60);
-    // ctx.strokeRect(50, 50, 50, 50);
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fill();
   }
 }
 
