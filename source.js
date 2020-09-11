@@ -40,10 +40,10 @@ function drawViz(randomness) {
   const regex = /[a-z]/gi;
   const colorRegex = /[g-z]/gi;
   // Generate a number from the random value
-  rNum = randomness.replaceAll(regex, "");
+  var rNum = randomness.replaceAll(regex, "");
   // Generate a color from the random value
-  color = "#" + randomness.replaceAll(colorRegex, "").slice(0, 6);
-  color2 = "#" + randomness.replaceAll(colorRegex, "").slice(3, 9);
+  var color = "#" + randomness.replaceAll(colorRegex, "").slice(0, 6);
+  var color2 = "#" + randomness.replaceAll(colorRegex, "").slice(3, 9);
   console.log("Color:", color);
 
   var canvas = document.getElementById("canvas");
@@ -74,7 +74,7 @@ var interval = 5;
 // on the value of data
 function poll() {
   console.log("starting polling every " + interval + " seconds");
-  var randomness = "ff00000"; // default, but we should get the fetch on the first go
+  var randomness = "ff0000"; // default, but we should get the fetch on the first go
   var start = 0;
   const runPoll = function() {
     if (cancelPoll) {
