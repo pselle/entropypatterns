@@ -74,7 +74,7 @@ var interval = 5;
 // on the value of data
 function poll() {
   console.log("starting polling every " + interval + " seconds");
-  var randomness = "#ff00000"; // default, but we should get the fetch on the first go
+  var randomness = "ff00000"; // default, but we should get the fetch on the first go
   var start = 0;
   const runPoll = function() {
     if (cancelPoll) {
