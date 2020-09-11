@@ -9,10 +9,10 @@ function makePattern(color, bg) {
 
   // Give the pattern a width and height dependent on the array
   if (array[0] > 50) {
-    array[0] = array[0]/2;
+    array[0] = array[0] / 2;
   }
   if (array[1] > 50) {
-    array[1] = array[1]/2;
+    array[1] = array[1] / 2;
   }
   patternCanvas.width = array[0] > 15 ? array[0] / 2 : 10;
   console.log("Pattern width", patternCanvas.width);
@@ -40,10 +40,10 @@ function drawViz(randomness) {
   const regex = /[a-z]/gi;
   const colorRegex = /[g-z]/gi;
   // Generate a number from the random value
-  rNum = randomness.replaceAll(regex, "");
+  var rNum = randomness.replaceAll(regex, "");
   // Generate a color from the random value
-  color = "#" + randomness.replaceAll(colorRegex, "").slice(0,6);
-  color2 = "#" + randomness.replaceAll(colorRegex, "").slice(3,9);
+  var color = "#" + randomness.replaceAll(colorRegex, "").slice(0, 6);
+  var color2 = "#" + randomness.replaceAll(colorRegex, "").slice(3, 9);
   console.log("Color:", color);
 
   var canvas = document.getElementById("canvas");
@@ -74,19 +74,33 @@ var interval = 5;
 // on the value of data
 function poll() {
   console.log("starting polling every " + interval + " seconds");
+  var randomness = "ff0000"; // default, but we should get the fetch on the first go
+  var start = 0;
   const runPoll = function() {
     if (cancelPoll) {
       console.log("Stopping polling");
       return;
     }
-    fetch("https://drand.cloudflare.com/public/latest")
-      .then(response => response.json())
-      .then(data => {
-        // Have the random data, run an update function
-        console.log("Drand value: ", data.randomness);
-        drawViz(data.randomness);
-        setTimeout(runPoll, interval * 1000);
-      });
+    // Every minute, run fetch. There are 12 5-sec intervals in one minute
+    if (start == 0) {
+      fetch("https://drand.cloudflare.com/public/latest")
+        .then(response => response.json())
+        .then(data => {
+          // Have the random data, run an update function
+          console.log("Drand value: ", data.randomness);
+          randomness = data.randomness;
+          drawViz(randomness);
+          setTimeout(runPoll, interval * 1000);
+        });
+    } else {
+      drawViz(randomness);
+      setTimeout(runPoll, interval * 1000);
+    }
+    start++;
+    if (start == 12) {
+      start = 0;
+    }
+    console.log(start)
   };
   return runPoll();
 }
